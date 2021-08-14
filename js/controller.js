@@ -7,6 +7,8 @@ function onInit() {
     renderGallery()
     gCanvas = document.getElementById('canvas')
     gCtx = gCanvas.getContext('2d')
+    gLineCount = 1;
+    gCurrLineIdx = 0
 
 }
 function renderGallery() {
@@ -18,10 +20,6 @@ function renderGallery() {
     document.querySelector('.grid-container').innerHTML = imgHtmls
 
 }
-
-// document.querySelector('.editor-container').hidden = false;
-// document.querySelector('.gallery-container').hidden = true;
-// document.querySelector('.memes-container').hidden = true;
 
 function onShowEditor({ id }) {
     gCurrLineIdx = 0;
@@ -54,6 +52,7 @@ function onRenderTxt() {
 }
 function onAddLine() {
     addLine()
+    document.querySelector('.text-line').value = ' '
     onRenderTxt()
     document.querySelector('.text-line').focus()
 }
@@ -62,43 +61,41 @@ function onDeleteLine() {
     document.querySelector('.text-line').value = ' '
 
 }
-function onMoveIdx(t) {
-    // console.log(t);
-    if (t.classList.contains('line-up') && gCurrLineIdx >= 0 && gCurrLineIdx < gMeme.lines.length) {
-        gCurrLineIdx++
-        gMeme.selectedLineIdx = gCurrLineIdx;
-    } else if (t.classList.contains('line-down') && gCurrLineIdx >= 0 && gCurrLineIdx <= gMeme.lines.length) {
-        gCurrLineIdx--
-        gMeme.selectedLineIdx = gCurrLineIdx;
-    }
+function onMoveLine(t) {
+    let direction = (t.classList.contains('up')) ? 'up' : 'down';
+    console.log(direction);
+    lineMove(direction)
 }
-function onFontSizeChange(fontClass){
-    if(fontClass.contains('font-size-up')){
-        gMeme.lines[gCurrLineIdx].size +=10;
-    }else  if(fontClass.contains('font-size-down')){
-        gMeme.lines[gCurrLineIdx].size -=10;
+function onMoveIdx() {
+    moveIdx()
+
+
+}
+function onFontSizeChange(fontClass) {
+    if (fontClass.contains('font-size-up')) {
+        gMeme.lines[gCurrLineIdx].size += 10;
+    } else if (fontClass.contains('font-size-down')) {
+        gMeme.lines[gCurrLineIdx].size -= 10;
     }
     onRenderTxt()
 }
 
-function onAlignText(alignClass){
-    // if(alignClass.contains('align-left')){
-    
-    // }else if(alignClass.contains('align-center')){
-     
-    // }else if(alignClass.contains('align-right')){
-    
-    // }
+function onAlignText(alignClass) {
+    console.log('hiii');
+    alignText(alignClass)
 }
+
 function onGetColor() {
     var color = document.querySelector('[name="color-selector"]').value;
     setFillColor(color)
     onRenderTxt()
 }
 
-function onGetBorderColor(){
+function onGetBorderColor() {
     var color = document.querySelector('[name="color-selector"]').value;
     setborderColor(color)
     onRenderTxt()
-
+}
+function onOpenColorBox(){
+    document.querySelector('.color-popup ibox').classList.toggle('.open-box')
 }
