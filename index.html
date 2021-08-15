@@ -9,19 +9,21 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/gallery.css">
     <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/memes-storage.css">
+
     <title>MemeGen</title>
 </head>
 
 <body onload="onInit()">
-    <div class="screen" onclick="toggleMenu()"></div>
+    <div class="screen" onclick="onToggleMenu()"></div>
     <header class="main-header ">
         <nav class="main-nav flex align-center space-between">
-            <div class="logo "><a onclick="onShowGallery()" href="#"><img src="/LOGO/LOGO.png" alt="" srcset=""></a>
+            <div class="logo"><a onclick="onShowGallery()" href="#"><img src="/LOGO/LOGO.png" alt="" srcset=""></a>
             </div>
-            <ul class="nav-list clean-list flex">
+            <ul class="nav-list clean-list ">
                 <li><a onclick="onShowGallery()" href="#">Gallery</a></li>
                 <li><a onclick="onShowMemes()" href="#">Memes</a></li>
-                <!-- <li><a onclick="onShowAbout()" href="#">About</a></li> -->
+                <li><a onclick="onShowAbout()" href="#">About</a></li>
             </ul>
         </nav>
         <button class="btn-menu-toggle" onclick="toggleMenu()"><span class="fa fa-bars"></span></button>
@@ -29,52 +31,141 @@
     </header>
 
     <main class="gallery-container">
-        <section class="grid-container"></section>
+        <div class="search-div flex ">
+            <input class="search-box" name="search-box" type="search" placeholder="Search Memes...">
+            <button class="myBtn" onclick="onKeyboardFilter()"></button>
+            <div class="tags-box flex space-between"></div>
+        </div>
+        <button class="btn all-btn" onclick="onFilterByAll('all')">All</button>
+
+        <section class="grid-container">
+        </section>
     </main>
     <main class="memes-container">
-        <section class="grid-container"></section>
+        <section class="memes-area flex space-around">
+        </section>
     </main>
     <main class="editor-container">
-
         <section class="edit-area flex align-center ">
             <div class="img-area">
                 <canvas class="canvas" id="canvas" width="500" height="500"></canvas>
             </div>
+            <div class="saved-modal">
+                <h2>Meme Saved!</h2>
+                <h4>Go check it out!</h4>
+            </div>
             <div class="editor-bar flex direction align-center">
-                <input type="text" class="text-line" onkeyup="onRenderTxt()">
+                <input type="text" class="text-line" placeholder="Hello" onkeyup="onRenderTxt()">
                 <div class="edit-btns">
-                    <button class="up-btn" onclick="onMoveLine(this)" class="up"><i class="fa fa-arrow-up"></i></button>
-                    <button class="down-btn" onclick="onMoveLine(this)" class="down"><i
+                    <button class="up-btn" onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" onclick="onMoveLine(this)"><i class="fa fa-arrow-up"></i></button>
+                    <button class="down-btn" onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" onclick="onMoveLine(this)" class="down"><i
                             class="fa fa-arrow-down"></i></button>
-                    <button class="switch-btn" onclick="onMoveIdx()"><i class="fa fa-exchange"></i></button>
-                    <button class="add-btn" onclick="onAddLine()"><i class="fa fa-plus"></i></button>
-                    <button class="delete-btn" onclick="onDeleteLine()"><i class="fa fa-trash"></i></button>
+                    <button class="switch-btn" onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" onclick="onMoveIdx()"><i class="fa fa-exchange"></i></button>
+                    <button class="add-btn" onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" onclick="onAddLine()"><i class="fa fa-plus"></i></button>
+                    <button class="delete-btn" onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" onclick="onDeleteLine()"><i class="fa fa-trash"></i></button>
                 </div>
 
-                <section class="text-editor grid">
-                    <button class="font-size font-size-up" onclick="onFontSizeChange(this.classList)">A+</button>
-                    <button class="font-size font-size-down" onclick="onFontSizeChange(this.classList)">A-</button>
-                    <button class="align-left" onclick="onAlignText(this.classList)"><i
+                <section class="text-editor">
+                    <button class="font-size font-size-up" onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" onclick="onFontSizeChange(this.classList)">A+</button>
+                    <button class="font-size font-size-down" onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" onclick="onFontSizeChange(this.classList)">A-</button>
+                    <button class="align-left" onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" onclick="onAlignText(this.classList)"><i
                             class="fa fa-align-left"></i></button>
-                    <button class="align-center" onclick="onAlignText(this.classList)"><i
+                    <button class="align-center" onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" onclick="onAlignText(this.classList)"><i
                             class="fa fa-align-center"></i></button>
-                    <button class="align-right" onclick="onAlignText(this.classList)"><i
+                    <button class="align-right" onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" onclick="onAlignText(this.classList)"><i
                             class="fa fa-align-right"></i></button>
-                    <label for="fill-color">
-                        <input onchange="onGetColor()" type="color" name="color-selector" class="fill-color">
-                    </label>
-                    <label for="stroke-color">
-                        <input onchange="onGetBorderColor()" type="color" name="border-color" class="border-color">
-                    </label>
-                    <div class="font-selctor">
-                        <input type="list" class="font-selector">
+
+                    <button onclick="onOpenColorBox()" class="fill-color color-btn">
+                        <h2>F</h2>
+                    </button>
+
+                    <div class="color-picker ">
+                        <div class="color-popup">
+                            <div class="color-boxes">
+                                <div onclick="onSelectColor(this)" class="color-box font-box-1" data-color="#000000">
+                                </div>
+                                <div onclick="onSelectColor(this)" class="color-box font-box-2" data-color="#ffffff">
+                                </div>
+                                <div onclick="onSelectColor(this)" class="color-box font-box-3" data-color="#995555">
+                                </div>
+                                <div onclick="onSelectColor(this)" class="color-box font-box-4" data-color="#ff3333">
+                                </div>
+                                <div onclick="onSelectColor(this)" class="color-box font-box-5" data-color="#ff8800">
+                                </div>
+                                <div onclick="onSelectColor(this)" class="color-box font-box-6" data-color="#eeee00">
+                                </div>
+                                <div onclick="onSelectColor(this)" class="color-box font-box-7" data-color="#22ee22">
+                                </div>
+                                <div onclick="onSelectColor(this)" class="color-box font-box-8" data-color="#00bff3">
+                                </div>
+                                <div onclick="onSelectColor(this)" class="color-box font-box-9" data-color="#3333ff">
+                                </div>
+                                <div class="color-box fill-color">
+                                    <input onchange="onGetColor()" type="color" name="color-selector"
+                                        class="fill-color color-box">
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <button onclick="onOpenColorBox()" class="stroke-color color-btn">
+                        <h2>S</h2>
+                    </button>
+                    <div class="color-picker stroke-color">
+                        <div class="color-popup">
+                            <div class="color-boxes">
+                                <div onclick="onSelectStrokeColor(this)" class="color-box font-box-1"
+                                    data-color="#000000">
+                                </div>
+                                <div onclick="onSelectStrokeColor(this)" class="color-box font-box-2"
+                                    data-color="#ffffff">
+                                </div>
+                                <div onclick="onSelectStrokeColor(this)" class="color-box font-box-3"
+                                    data-color="#995555">
+                                </div>
+                                <div onclick="onSelectStrokeColor(this)" class="color-box font-box-4"
+                                    data-color="#ff3333">
+                                </div>
+                                <div onclick="onSelectStrokeColor(this)" class="color-box font-box-5"
+                                    data-color="#ff8800">
+                                </div>
+                                <div onclick="onSelectStrokeColor(this)" class="color-box font-box-6"
+                                    data-color="#eeee00">
+                                </div>
+                                <div onclick="onSelectStrokeColor(this)" class="color-box font-box-7"
+                                    data-color="#22ee22">
+                                </div>
+                                <div onclick="onSelectStrokeColor(this)" class="color-box font-box-8"
+                                    data-color="#00bff3">
+                                </div>
+                                <div onclick="onSelectStrokeColor(this)" class="color-box font-box-9"
+                                    data-color="#3333ff">
+                                </div>
+                                <div onclick="onSelectStrokeColor(this)" class="color-box font-box-10"
+                                    data-color="#dd00cc">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <select class="font-selector" list="fonts" onchange="onFontChange(this.value)">
+                        <!-- <input type="list" class="font-selector" value="Impact" o> -->
+
+                        <option value="impact">Impact</option>
+                        <option value="poppins-regular">Poppins</option>
+                        <option value="arial">Arial</option>
+                        <option value="comic">Comic</option>
+                        <option value="georgia">Georgia</option>
+                        <option value="times">Times</option>
+
+
+                    </select>
                 </section>
                 <div class="output-container flex space-between">
-                    <button class="btn share-btn"><i class="fa fa-share"></i> Share</button>
-                    <button class="btn download-btn"><a href="#" class="btn" onclick="downloadImg(this)"
+                    <button onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" class="btn share-btn" onclick="uploadImg()"><i class="fa fa-share"></i> Share</button>
+                    <button onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" class="btn download-btn"><a href="#" class="btn" onclick="downloadImg(this)"
                             download="my-img.jpg"> <i class="fa fa-download"></i> Dowload</a></button>
                 </div>
+                <button onmouseup="onBtnRelease(this)" onmousedown="onBtnClicked(this)" class="btn save-btn" onclick="onSaveToMemes()"><i class="fa fa-save"></i> Save</button>
             </div>
 
         </section>
@@ -85,7 +176,9 @@
     <script src="js/upload-service.js"></script>
     <script src="js/service.js"></script>
     <script src="js/controller.js"></script>
-    <!-- <script src="js/i18n-service.js"></script> -->
+    <script src="js/drag&drop.js"></script>
+    <script src="js/saved-memes.js"></script>
+
 </body>
 
 </html>
